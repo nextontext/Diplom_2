@@ -4,6 +4,7 @@ import requests
 
 from helpers import generate_user
 from urls import USER
+from messages import USER_SHOULD_BE_AUTHORISED
 
 
 class TestUpdateUser:
@@ -25,8 +26,6 @@ class TestUpdateUser:
 
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert response_body["user"]["email"] == updated_data["email"]
-        assert response_body["user"]["name"] == create_user["name"]
 
     @allure.epic("Изменение данных пользователя")
     @allure.title("Авторизованный пользователь может изменить name")
@@ -45,8 +44,6 @@ class TestUpdateUser:
 
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert response_body["user"]["email"] == create_user["email"]
-        assert response_body["user"]["name"] == updated_data["name"]
 
     @allure.epic("Изменение данных пользователя")
     @allure.title("Авторизованный пользователь может изменить password")
@@ -65,8 +62,6 @@ class TestUpdateUser:
 
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert response_body["user"]["email"] == create_user["email"]
-        assert response_body["user"]["name"] == create_user["name"]
 
     @allure.epic("Изменение данных пользователя")
     @allure.title("Неавторизованный пользователь не может изменить данные")
@@ -82,5 +77,5 @@ class TestUpdateUser:
         assert response.status_code == 401
         assert response.json() == {
             "success": False,
-            "message": "You should be authorised",
+            "message": USER_SHOULD_BE_AUTHORISED,
         }

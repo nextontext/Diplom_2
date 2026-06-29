@@ -2,6 +2,7 @@ import allure
 import requests
 
 from urls import ORDERS
+from messages import USER_SHOULD_BE_AUTHORISED
 
 
 class TestGetUserOrders:
@@ -17,6 +18,16 @@ class TestGetUserOrders:
 
         assert response.status_code == 200
         assert response_body["success"] is True
+    
+    @allure.epic("Получение заказов пользователя")
+    @allure.title("Ответ со списком заказов содержит данные о заказах и счётчиках")
+    def test_get_user_orders_response_contains_orders_data(self, create_user):
+        response = requests.get(
+            ORDERS,
+            headers={"Authorization": create_user["access_token"]},
+        )
+        response_body = response.json()
+
         assert "orders" in response_body
         assert "total" in response_body
         assert "totalToday" in response_body
@@ -29,5 +40,5 @@ class TestGetUserOrders:
         assert response.status_code == 401
         assert response.json() == {
             "success": False,
-            "message": "You should be authorised",
+            "message": USER_SHOULD_BE_AUTHORISED,
         }

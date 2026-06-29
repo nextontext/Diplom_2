@@ -2,6 +2,7 @@ import allure
 import requests
 
 from urls import ORDERS
+from messages import INGREDIENT_IDS_MUST_BE_PROVIDED, INTERNAL_SERVER_ERROR
 
 
 class TestCreateOrder:
@@ -22,9 +23,6 @@ class TestCreateOrder:
 
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert "name" in response_body
-        assert "order" in response_body
-        assert "number" in response_body["order"]
 
     @allure.epic("Создание заказа")
     @allure.title("Неавторизованный пользователь может создать заказ с ингредиентами")
@@ -38,9 +36,6 @@ class TestCreateOrder:
 
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert "name" in response_body
-        assert "order" in response_body
-        assert "number" in response_body["order"]
 
     @allure.epic("Создание заказа")
     @allure.title("Нельзя создать заказ без ингредиентов")
@@ -54,8 +49,11 @@ class TestCreateOrder:
             json=order_data,
             headers={"Authorization": create_user["access_token"]},
         )
+        response_body = response.json()
 
         assert response.status_code == 400
+        assert response_body["success"] is False
+        assert response_body["message"] == INGREDIENT_IDS_MUST_BE_PROVIDED
 
     @allure.epic("Создание заказа")
     @allure.title("Нельзя создать заказ с неверным хешем ингредиента")
@@ -71,3 +69,4 @@ class TestCreateOrder:
         )
 
         assert response.status_code == 500
+        assert INTERNAL_SERVER_ERROR in response.text

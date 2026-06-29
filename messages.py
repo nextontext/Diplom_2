@@ -1,0 +1,6 @@
+USER_ALREADY_EXISTS = "User already exists"
+REQUIRED_FIELDS_MISSING = "Email, password and name are required fields"
+INVALID_LOGIN_OR_PASSWORD = "email or password are incorrect"
+USER_SHOULD_BE_AUTHORISED = "You should be authorised"
+INGREDIENT_IDS_MUST_BE_PROVIDED = "Ingredient ids must be provided"
+INTERNAL_SERVER_ERROR = "Internal Server Error"

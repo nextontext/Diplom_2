@@ -2,7 +2,7 @@ import allure
 import requests
 
 from urls import LOGIN_USER
-
+from messages import INVALID_LOGIN_OR_PASSWORD
 
 class TestLoginUser:
 
@@ -19,6 +19,18 @@ class TestLoginUser:
 
         assert response.status_code == 200
         assert response_body["success"] is True
+
+    @allure.epic("Логин пользователя")
+    @allure.title("Ответ успешного логина содержит токены и данные пользователя")
+    def test_login_response_contains_user_data_and_tokens(self, create_user):
+        login_data = {
+            "email": create_user["email"],
+            "password": create_user["password"],
+        }
+
+        response = requests.post(LOGIN_USER, json=login_data)
+        response_body = response.json()
+
         assert response_body["user"]["email"] == create_user["email"]
         assert response_body["user"]["name"] == create_user["name"]
         assert "accessToken" in response_body
@@ -37,5 +49,5 @@ class TestLoginUser:
         assert response.status_code == 401
         assert response.json() == {
             "success": False,
-            "message": "email or password are incorrect",
+            "message": INVALID_LOGIN_OR_PASSWORD,
         }
