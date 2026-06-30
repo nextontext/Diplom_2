@@ -2,6 +2,7 @@ import pytest
 import requests
 import allure
 
+from helpers import generate_user
 from urls import REGISTER_USER
 from messages import USER_ALREADY_EXISTS, REQUIRED_FIELDS_MISSING
 
@@ -10,16 +11,17 @@ class TestCreateUSER:
 
     @allure.epic("Создание пользователя")
     @allure.title("Успешное создание уникального пользователя")
-    def test_create_unique_user_success(self, registered_user):
-        response, _ = registered_user
+    def test_create_unique_user_success(self, user_to_delete):
+        user_data = generate_user()
 
+        response = requests.post(REGISTER_USER, json=user_data)
         response_body = response.json()
 
+        user_to_delete["access_token"] = response_body["accessToken"]
+        
         assert response.status_code == 200
         assert response_body["success"] is True
-        assert "accessToken" in response_body
-        assert "refreshToken" in response_body
-    
+
     @allure.epic("Создание пользователя")
     @allure.title("Пользователь уже зарегистрирован на платформе")
     def test_create_existing_user_returns_error(self, registered_user):

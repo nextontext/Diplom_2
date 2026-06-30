@@ -48,3 +48,16 @@ def ingredients():
         response_body["data"][0]["_id"],
         response_body["data"][1]["_id"],
     ]
+
+
+@pytest.fixture
+def user_to_delete():
+    user = {}
+
+    yield user
+
+    if "access_token" in user:
+        requests.delete(
+            USER,
+            headers={"Authorization": user["access_token"]},
+        )
